@@ -1,6 +1,13 @@
 @extends('layouts.admin')
 
 @section('content')
+
+<style>
+    tr.body td.aksi {
+        padding: 6px 15px 5px 15px;
+    }
+</style>
+
 <h1 class="title-page align-self-stretch">Manajemen Dokumen</h1>
 <div class="content d-flex flex-column justify-content-center align-items-center align-self-stretch " style="gap: 20px;">
     <div class="box-filter d-flex align-items-end align-self-stretch" style="gap: 40px;">
@@ -20,7 +27,7 @@
             </div>
             <div class="filter d-flex flex-column align-items-start" style="gap: 10px; flex: 1 0 0;">
                 <label for="tanggal">Filter Tanggal</label>
-                <input type="date" name="tanggal" id="tanggal">
+                <input class="form-date" type="date" name="tanggal" id="tanggal">
             </div>
         </form>
         <button class="submit-filter" type="submit">Terapkan Filter</button>

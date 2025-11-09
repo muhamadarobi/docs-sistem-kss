@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\DocumentsController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -12,3 +13,5 @@ Route::get('/document', [AdminController::class, 'document'])->name('admin.docum
 Route::get('/manage', [AdminController::class, 'manage'])->name('admin.usermanage');
 
 Route::get('/user', [DocumentsController::class, 'index'])->name('documents.index');
+
+Route::get('/login', [UserController::class, 'index'])->name('user.login');

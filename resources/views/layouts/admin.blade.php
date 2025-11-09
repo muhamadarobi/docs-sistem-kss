@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KSS - Document Management System</title>
     <!-- Placeholder Icon -->
-    <link rel="icon" href="FOTO/Logo-compressed 1.png">
+    <link rel="icon" href="{{ asset('assets/Logo-compressed 1.png')}}">
 
     <!-- CDN Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -17,6 +17,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
+
+    <!-- TAMBAHAN: Impor library Turbo.js -->
+    <!-- Ini akan membuat navigasi terasa instan tanpa reload halaman penuh -->
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-esm.js"></script>
 
     <!-- CSS -->
     <style>
@@ -40,13 +44,45 @@
             /* Mencegah overflow horizontal saat transisi */
             overflow-x: hidden;
         }
+
+        /* --- TAMBAHAN: CSS Untuk Turbo Loader --- */
+        #turbo-loader {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(255, 255, 255, 0.8); /* Latar belakang semi-transparan */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            display: none; /* Sembunyi by default */
+            transition: opacity 0.2s ease; /* Transisi halus */
+        }
+
+        #turbo-loader .spinner {
+            border: 8px solid #f3f3f3; /* Abu-abu muda */
+            border-top: 8px solid var(--blue-kss); /* Biru KSS */
+            border-radius: 50%;
+            width: 60px;
+            height: 60px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        /* --- AKHIR CSS Loader --- */
+
         .menu, .logout-button {
             padding: 10px 12px;
             gap: 20px;
             border-radius: 8px;
             text-decoration: none;
             /* Transisi untuk gap dan padding */
-            transition: all 0.3s ease;
+            transition: all 0.1s ease;
         }
         .menu .text-sidebar, .logout-button .logout {
             font-size: 14px;
@@ -54,7 +90,7 @@
             color: var(--black-color);
             text-decoration: none;
             /* Transisi untuk opacity dan visibilitas */
-            transition: opacity 0.2s ease, visibility 0.2s ease;
+            transition: opacity 0.1s ease, visibility 0.1s ease;
             white-space: nowrap; /* Mencegah teks turun baris saat transisi */
         }
         .menu:hover {
@@ -77,12 +113,20 @@
         .sidebar-menu a {
             align-self: stretch;
         }
-        #active {
+        .menu svg path {
+            fill: var(--black-color);
+        }
+
+        .menu.active {
             border-radius: 8px;
             background: rgba(243, 156, 18, 0.20);
         }
-        #active .text-sidebar {
+        .menu.active .text-sidebar {
             font-weight: 700;
+        }
+
+        .menu.active svg path {
+            fill: var(--orange-kss);
         }
 
         .header {
@@ -137,7 +181,7 @@
         }
 
         .logo img {
-             transition: all 0.3s ease; /* Transisi untuk logo */
+            transition: all 0.3s ease; /* Transisi untuk logo */
         }
 
         /* --- MODIFIKASI: Style untuk .sidebar-collapsed --- */
@@ -354,33 +398,12 @@
             border: 1px solid rgba(0, 0, 0, 0.25);
         }
 
-        .table tr th, .table tr td{
-            display: flex;
-            padding: 10px 15px;
-            align-items: center;
-            flex: 1 0 0;
-            font-size: 12px;
-            font-weight: 600;
-            max-width: 250px;
-        }
-        .table tr th.number, .table tr td.number {
-            max-width: 40px;
-        }
-        .table tr th.keterangan, .table tr td.keterangan {
-            min-width: 350px;
-            max-width: 2000px;
-        }
-        .table tr td {
-            font-weight: 400;
-        }
-        .table tr td.aksi {
-            gap: 4px;
-            align-items: end;
-        }
-        .table tr td.aksi button {
-            border: none;
-            background: none;
-        }
+        /* --- BLOK TABEL PERTAMA (DUPLIKAT) DIHAPUS --- */
+        /* Styling tabel yang sebelumnya ada di sini (baris 430-457)
+           sebagian besar tumpang tindih dan ditimpa oleh blok di baris 475.
+           Saya telah menghapusnya dan menggabungkan aturan unik
+           (.keterangan) ke dalam blok di bawah.
+        */
 
 
         /* Pengguna */
@@ -401,12 +424,8 @@
             color: #FFF;
         }
 
-        .document-table {
-            border-radius: 10px;
-            background-color: #FFF;
-            border: 1px solid rgba(0, 0, 0, 0.25);
-        }
 
+        /* --- BLOK STYLING TABEL UTAMA (GABUNGAN) --- */
         .table tr th, .table tr td{
             display: flex;
             padding: 10px 15px;
@@ -423,6 +442,12 @@
             flex: 0 0 50px; /* Tambahan */
         }
 
+        /* Aturan ini dipindahkan dari blok duplikat pertama */
+        .table tr th.keterangan, .table tr td.keterangan {
+            min-width: 350px;
+            max-width: 2000px;
+        }
+
         /* --- TAMBAHAN STYLE UNTUK KOLOM STATUS & AKSI --- */
         .table tr th.status, .table tr td.status-cell {
             max-width: 150px;
@@ -434,8 +459,8 @@
             font-weight: 400;
         }
         .table tr td.aksi {
-            gap: 4px;
-            align-items: end;
+            gap: 5px;
+            align-items: center;
         }
         .table tr td.aksi button {
             border: none;
@@ -444,14 +469,39 @@
             font-size: 10px;
             text-align: center;
             border-radius: 6px;
+
+
+            /* CATATAN: Jika Anda memerlukan tombol *tanpa* background di
+              beberapa tabel (seperti di .document-table), Anda perlu
+              membuat aturan CSS yang lebih spesifik.
+
+              Misalnya, Anda bisa menambahkan:
+              .document-table .table tr td.aksi button {
+                 background: none;
+                 padding: 0;
+                 color: initial;
+              }
+
+              Untuk saat ini, saya mengasumsikan styling tombol ini
+              (dengan background warna) adalah yang diinginkan.
+            */
         }
+
+            tr.body td {
+        border-bottom: none;
+        }
+
+        tr.body {
+            border-bottom: 1px solid #E0E0E0;
+        }
+
         .btn-edit {
-            border: 1px solid var(--blue-kss) !important;
-            background-color: rgba(0, 120, 194, 0.75) !important;
+            padding: 4px 10px !important;
+            background-color: rgb(0, 120, 194) !important;
         }
         .btn-call {
-            border: 1px solid #25d366 !important;
-            background: rgba(37, 211, 101, 0.75) !important;
+            padding: 4px 10px !important;
+            background: rgb(37, 211, 101) !important;
         }
 
         /* --- STYLES BARU UNTUK TOGGLE SWITCH (LEBIH KECIL) --- */
@@ -526,6 +576,11 @@
     </style>
 </head>
 <body>
+    <!-- TAMBAHAN: Elemen Loading Overlay -->
+    <div id="turbo-loader">
+        <div class="spinner"></div>
+    </div>
+
     <!-- Sidebar -->
     @include('layouts.sidebar.sidebar')
 
@@ -547,55 +602,75 @@
          crossorigin="anonymous"></script>
 
         <!-- MODIFIKASI: JavaScript untuk Toggle Sidebar DAN Toggle Status -->
-        <script>
-            // Menjalankan script setelah semua konten HTML dimuat
-            document.addEventListener('DOMContentLoaded', function() {
+         <script>
+            // --- 1. Event Listener untuk Navigasi Turbo (Menampilkan Loader) ---
+            // Dipasang satu kali
+            document.addEventListener('turbo:click', function(event) {
+                const clickedLink = event.target.closest('a');
+                if (clickedLink && clickedLink.classList.contains('menu') && clickedLink.classList.contains('active')) {
+                    return; // Jangan tampilkan loader jika menu sudah aktif
+                }
+                const loader = document.getElementById('turbo-loader');
+                if (loader) {
+                    loader.style.display = 'flex';
+                }
+            });
 
-                // 1. Temukan tombol penutup sidebar
-                const sidebarToggleBtn = document.querySelector('.btn-close-sidebar');
+            // --- 2. Event Listener untuk Tombol Sidebar (Event Delegation) ---
+            // Dipasang satu kali ke 'document'. Ini akan menangani klik
+            // bahkan pada tombol yang baru dimuat oleh Turbo.
+            document.addEventListener('click', function(event) {
+                // Cek apakah yang diklik (atau parent-nya) adalah tombol sidebar
+                const sidebarToggleBtn = event.target.closest('.btn-close-sidebar');
 
-                // 2. Pastikan tombolnya ada
                 if (sidebarToggleBtn) {
+                    // Jika ya, jalankan logika toggle
+                    const sidebarStateKey = 'sidebarCollapsedState';
+                    document.body.classList.toggle('sidebar-collapsed');
 
-                    // 3. Tambahkan event listener untuk 'click'
-                    sidebarToggleBtn.addEventListener('click', function() {
+                    // Simpan status baru ke localStorage
+                    if (document.body.classList.contains('sidebar-collapsed')) {
+                        localStorage.setItem(sidebarStateKey, 'true');
+                    } else {
+                        localStorage.setItem(sidebarStateKey, 'false');
+                    }
+                }
+            });
 
-                        // 4. Toggle class 'sidebar-collapsed' pada elemen <body>
-                        // Ini akan memicu semua style CSS yang sudah kita definisikan
-                        document.body.classList.toggle('sidebar-collapsed');
-                    });
+            // --- 3. Event Listener setelah Halaman Selesai Dimuat Turbo ---
+            // 'turbo:load' berjalan saat load pertama DAN setiap pindah halaman.
+            // Gunakan ini untuk hal-hal yang perlu diinisialisasi ulang.
+            document.addEventListener('turbo:load', function() {
+
+                // (A) Sembunyikan Loader
+                const loader = document.getElementById('turbo-loader');
+                if (loader) {
+                    loader.style.display = 'none';
                 }
 
-                                // --- LOGIKA BARU UNTUK TOGGLE STATUS ---
+                // (B) Terapkan Status Sidebar dari localStorage
+                // (Ini penting agar saat halaman baru dimuat, sidebar tetap tertutup jika sebelumnya ditutup)
+                const sidebarStateKey = 'sidebarCollapsedState';
+                if (localStorage.getItem(sidebarStateKey) === 'true') {
+                    document.body.classList.add('sidebar-collapsed');
+                }
 
-                // 5. Temukan semua toggle switch di dalam tabel
-                //    Dibuat lebih spesifik ke .document-table untuk menghindari konflik
-                const toggles = document.querySelectorAll('.document-table .toggle-switch input[type="checkbox"]');
-
-                // 6. Tambahkan event listener untuk setiap toggle
+                // (C) Pasang listener untuk Toggle Status di dalam Tabel
+                // (Kita perlu melakukan ini di 'turbo:load' karena tabelnya selalu baru)
+                const toggles = document.querySelectorAll('.document-table .toggle-switch input[type="checkbox"], .table .toggle-switch input[type="checkbox"]'); // Ditambahkan .table
                 toggles.forEach(toggle => {
                     toggle.addEventListener('change', function() {
-                        // 'this' merujuk pada <input> yang diklik
-
-                        // 7. Temukan elemen <td> (status-cell) terdekat
                         const cell = this.closest('.status-cell');
                         if (cell) {
-                            // 8. Temukan elemen .status-text di dalam cell tersebut
                             const statusTextElem = cell.querySelector('.status-text');
                             if (statusTextElem) {
-                                // 9. Ubah teks berdasarkan status checked
-                                if (this.checked) {
-                                    statusTextElem.textContent = 'Aktif';
-                                } else {
-                                    statusTextElem.textContent = 'Nonaktif';
-                                }
+                                statusTextElem.textContent = this.checked ? 'Aktif' : 'Nonaktif';
                             }
                         }
                     });
                 });
 
             });
-          </script>
+         </script>
 </body>
 </html>
-

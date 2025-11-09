@@ -2,9 +2,12 @@
 
 @section('content')
 <style>
-    tr.body td {
-        border-bottom: none
+    tr.body td.aksi {
+        padding: 8px 15px;
     }
+
+
+
 </style>
 
             <h1 class="title-page align-self-stretch">Manajemen Pengguna</h1>
@@ -31,6 +34,25 @@
                                     <th>No Telp</th>
                                     <th class="status">Status</th> <!-- Class ditambahkan -->
                                     <th class="aksi">Aksi</th>
+                                </tr>
+                                <tr class="body d-flex align-items-center align-self-stretch">
+                                    <td class="number">1</td>
+                                    <td>Muhammad Arobi</td>
+                                    <td>Robi1714</td>
+                                    <td>Petugas Lapangan</td>
+                                    <td>085161511717</td>
+                                    <!-- PERUBAHAN HTML: Toggle Switch ditambahkan -->
+                                    <td class="status-cell">
+                                        <span class="status-text">Aktif</span>
+                                        <label class="toggle-switch">
+                                            <input type="checkbox" checked>
+                                            <span class="slider round"></span>
+                                        </label>
+                                    </td>
+                                    <td class="aksi">
+                                        <button class="btn-edit">Edit</button>
+                                        <button class="btn-call">Hubungi</button>
+                                    </td>
                                 </tr>
                                 <tr class="body d-flex align-items-center align-self-stretch">
                                     <td class="number">1</td>
