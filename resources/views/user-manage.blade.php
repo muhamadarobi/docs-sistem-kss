@@ -25,7 +25,7 @@
                                     Tabel User
                                 </span>
                             </div>
-                            <table class="table" style="border-radius: 0 0 10px 10px; margin-bottom: 0;"> <!-- margin-bottom: 0 -->
+                            <table class="table" style="border-radius: 0 0 10px 10px; margin-bottom: 15px;"> <!-- margin-bottom: 0 -->
                                 <tr class="head d-flex align-items-center align-self-stretch" style="background-color: #EAEAEA;">
                                     <th class="number">No</th>
                                     <th>Nama Lengkap</th>

@@ -1,30 +1,107 @@
-@extends('auth.login')
+{{-- PERHATIAN: Pastikan 'layouts.app' atau 'layouts.auth' adalah file layout Anda yang benar --}}
+{{-- Sebuah file tidak bisa @extends ke dirinya sendiri ('auth.login') --}}
+@extends('auth.login') {{-- Saya asumsikan ini nama layout Anda --}}
 
 @section('content')
     <div class="container-login">
-        <img class="image-login" src="FOTO/KSS.png" alt="">
+        <img class="image-login" src="{{ asset('assets/KSS.png')}}" alt="">
         <div class="box-login d-flex flex-column align-items-center">
             <span class="title-login" style="font-size: 24px;">Masukkan Data Akun</span>
             <span>Sistem Manajemen Dokumen Operasional</span>
         </div>
-        <form action="" class="form-login d-flex flex-column align-items-start align-self-stretch" style="gap: 20px;">
+
+        <!-- Tampilkan Error Jika Login Gagal -->
+        @if ($errors->any())
+            <div class="alert alert-danger" style="width: 100%; max-width: 400px; padding: 10px; border-radius: 8px; text-align: center;">
+                @error('username')
+                    <span>{{ $message }}</span>
+                @else
+                    <span>Gagal melakukan login.</span>
+                @enderror
+            </div>
+        @endif
+
+
+        {{-- FORM YANG DIPERBAIKI: action, method, dan @csrf --}}
+        <form action="{{ route('login.process') }}" method="POST" class="form-login d-flex flex-column align-items-start align-self-stretch" style="gap: 20px;" data-turbo="false">
+            @csrf {{-- Token Wajib untuk keamanan Laravel --}}
+
             <div class="login-input d-flex flex-column align-items-start align-self-stretch" style="gap: 8px;">
                 <label for="username">Username</label>
-                <input type="text" id="username" name="username" required>
+                <input type="text" id="username" name="username" value="{{ old('username') }}" required>
             </div>
+
+            <!-- MODIFIKASI BAGIAN PASSWORD -->
             <div class="login-input d-flex flex-column align-items-start align-self-stretch" style="gap: 8px;">
                 <label for="password">Password</label>
-                <input type="text" id="password" name="password" required>
+                <!-- Wrapper baru untuk input dan ikon -->
+                <div class="password-wrapper">
+                    <input type="password" id="password" name="password" required>
+                    <!-- Ikon toggle -->
+                    <span id="togglePassword">
+                        <i class="bi bi-eye-slash"></i>
+                    </span>
+                </div>
             </div>
-            <div class="login-input d-flex flex-column align-items-start align-self-stretch" style="gap: 8px;">
-                <label for="role">Role</label>
-                <select class="form-select" name="" id="">
-                    <option value="" selected disabled>Pilih Role...</option>
-                    <option value="Manajer Operasional">Manajer Operasional</option>
-                    <option value="Manajer Operasional">Petugas Lapangan</option>
-                </select>
+            <!-- AKHIR MODIFIKASI -->
+
+            {{-- Input Role yang dikomentari (sudah benar, karena login tidak butuh role) --}}
+            {{-- ... --}}
+
+            <!-- Tambahan: Checkbox "Remember Me" -->
+            <div class="form-check remember-me" style="margin-left: 5px">
+                <input class="form-check-input" type="checkbox" name="remember" id="remember">
+                <label class="form-check-label" for="remember">
+                    Ingat Saya
+                </label>
             </div>
-            <button class="btn-login">Masuk</button>
+            <button type="submit" class="btn-login">Masuk</button>
         </form>
     </div>
 @endsection
+
+<!-- SCRIPT BARU UNTUK TOGGLE PASSWORD (TURBO-SAFE) -->
+@push('scripts')
+    <script>
+        // Gunakan Event Delegation, yang Turbo-safe
+        // Listener ini ditambahkan ke 'document' yang selalu ada
+        document.addEventListener('click', function (event) {
+
+            // Cari elemen #togglePassword atau salah satu anaknya yang diklik
+            const togglePassword = event.target.closest('#togglePassword');
+
+            // Jika yang diklik bukan tombol toggle, abaikan
+            if (!togglePassword) {
+                return;
+            }
+
+            // Temukan elemen terkait
+            // Kita gunakan querySelector di dalam 'password-wrapper' terdekat untuk keamanan
+            const wrapper = togglePassword.closest('.password-wrapper');
+            if (!wrapper) return;
+
+            const passwordInput = wrapper.querySelector('#password');
+            const icon = togglePassword.querySelector('i');
+
+            // Jika elemen tidak ditemukan, hentikan
+            if (!passwordInput || !icon) {
+                return;
+            }
+
+            // Cek tipe input saat ini
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+
+            // Ganti ikon mata
+            if (type === 'password') {
+                // Jika password, ikon mata tertutup
+                icon.classList.remove('bi-eye');
+                icon.classList.add('bi-eye-slash');
+            } else {
+                // Jika teks, ikon mata terbuka
+                icon.classList.remove('bi-eye-slash');
+                icon.classList.add('bi-eye');
+            }
+        });
+    </script>
+@endpush

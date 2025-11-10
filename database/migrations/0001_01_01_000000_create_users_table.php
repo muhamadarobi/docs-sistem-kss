@@ -11,22 +11,42 @@ return new class extends Migration
      */
     public function up(): void
     {
+        // 1. Buat tabel 'roles' TERLEBIH DAHULU
+        Schema::create('roles', function (Blueprint $table) {
+            $table->id();
+            $table->string('name')->unique(); // 'admin', 'petugas'
+            $table->timestamps();
+        });
+
+        // 2. Buat tabel 'users' SETELAH 'roles' ada
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-
-            // Diubah menjadi opsional (boleh NULL)
+            $table->string('username');
             $table->string('email')->unique()->nullable();
-
-            // Kolom email_verified_at DIHAPUS
             // $table->timestamp('email_verified_at')->nullable();
-
             $table->string('password');
+            $table->string('no_telp')->nullable();
 
-            // Kolom remember_token DIKEMBALIKAN (sesuai permintaan)
+            // === BARIS TAMBAHAN YANG DIMINTA ===
+            // Ini akan membuat kolom 'role_id' dan mengaturnya sebagai foreign key
+            // yang merujuk ke kolom 'id' di tabel 'roles'
+            $table->foreignId('role_id')->constrained('roles');
+            // ===================================
+
+            $table->enum('status', ['aktif', 'nonaktif'])->default('aktif');
             $table->rememberToken();
-
             $table->timestamps();
+        });
+
+        // 3. Buat tabel 'sessions'
+        Schema::create('sessions', function (Blueprint $table) {
+            $table->string('id')->primary();
+            $table->foreignId('user_id')->nullable()->index();
+            $table->string('ip_address', 45)->nullable();
+            $table->text('user_agent')->nullable();
+            $table->longText('payload');
+            $table->integer('last_activity')->index();
         });
     }
 
@@ -35,6 +55,9 @@ return new class extends Migration
      */
     public function down(): void
     {
+        // Hapus dalam urutan terbalik untuk menghindari error foreign key
+        Schema::dropIfExists('sessions');
         Schema::dropIfExists('users');
+        Schema::dropIfExists('roles');
     }
 };

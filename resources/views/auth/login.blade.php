@@ -12,10 +12,15 @@
     xintegrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
     crossorigin="anonymous">
 
+    <!-- CDN Bootstrap Icons (BARU) -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
     <!-- Google Fonts (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,opsz,wght@0,6..12,200..1000;1,6..12,200..1000&display=swap" rel="stylesheet">
+
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-esm.js"></script>
 
     <!-- CSS -->
     <style>
@@ -81,11 +86,36 @@
             border-radius: 25px;
             background: rgba(255, 255, 255, 0.90);
             font-weight: 400;
-            font-size: 16px;
+            font-size: 14px;
             color: #111111;
             border: none;
             box-shadow:  0 0 1px 0 rgba(0, 0, 0);
         }
+
+        /* Wrapper untuk input password (BARU) */
+        .password-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        /* Sesuaikan input di dalam wrapper (BARU) */
+        .password-wrapper input {
+            width: 100%;
+            /* Tambahkan padding kanan agar teks tidak tertutup ikon */
+            padding-right: 60px !important;
+        }
+
+        /* Styling ikon mata (BARU) */
+        .password-wrapper #togglePassword {
+            position: absolute;
+            right: 25px; /* Sesuaikan dengan padding input */
+            top: 50%;
+            transform: translateY(-50%);
+            cursor: pointer;
+            color: #555; /* Warna ikon */
+            font-size: 1.2rem; /* Ukuran ikon */
+        }
+
 
         .btn-login {
             display: flex;
@@ -106,12 +136,11 @@
             background:#ffcc00;
             outline: 2px solid var(--orange-kss);
         }
-
-
     </style>
 </head>
 <body>
     @yield('content')
+
+    @stack('scripts')
 </body>
 </html>
-

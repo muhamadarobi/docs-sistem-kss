@@ -472,18 +472,18 @@
 
 
             /* CATATAN: Jika Anda memerlukan tombol *tanpa* background di
-              beberapa tabel (seperti di .document-table), Anda perlu
-              membuat aturan CSS yang lebih spesifik.
+               beberapa tabel (seperti di .document-table), Anda perlu
+               membuat aturan CSS yang lebih spesifik.
 
-              Misalnya, Anda bisa menambahkan:
-              .document-table .table tr td.aksi button {
-                 background: none;
-                 padding: 0;
-                 color: initial;
-              }
+               Misalnya, Anda bisa menambahkan:
+               .document-table .table tr td.aksi button {
+                   background: none;
+                   padding: 0;
+                   color: initial;
+               }
 
-              Untuk saat ini, saya mengasumsikan styling tombol ini
-              (dengan background warna) adalah yang diinginkan.
+               Untuk saat ini, saya mengasumsikan styling tombol ini
+               (dengan background warna) adalah yang diinginkan.
             */
         }
 
@@ -596,20 +596,31 @@
         </div>
     </div>
 
-        <!-- JS Boostrap -->
+         <!-- JS Boostrap -->
          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
          xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
          crossorigin="anonymous"></script>
 
         <!-- MODIFIKASI: JavaScript untuk Toggle Sidebar DAN Toggle Status -->
          <script>
+            // --- (BARU) Variabel untuk melacak waktu muat ---
+            // (MODIFIKASI) Pindahkan ke 'window' agar persisten antar muatan Turbo
+            // Inisialisasi hanya jika belum ada
+            if (typeof window.loaderStartTime === 'undefined') {
+                window.loaderStartTime = null;
+            }
+            const minDisplayTime = 500; // 0.5 detik
+
             // --- 1. Event Listener untuk Navigasi Turbo (Menampilkan Loader) ---
-            // Dipasang satu kali
             document.addEventListener('turbo:click', function(event) {
                 const clickedLink = event.target.closest('a');
                 if (clickedLink && clickedLink.classList.contains('menu') && clickedLink.classList.contains('active')) {
                     return; // Jangan tampilkan loader jika menu sudah aktif
                 }
+
+                // (MODIFIKASI) Catat waktu mulai dan tampilkan loader
+                // (MODIFIKASI) Gunakan window.loaderStartTime
+                window.loaderStartTime = Date.now();
                 const loader = document.getElementById('turbo-loader');
                 if (loader) {
                     loader.style.display = 'flex';
@@ -617,8 +628,6 @@
             });
 
             // --- 2. Event Listener untuk Tombol Sidebar (Event Delegation) ---
-            // Dipasang satu kali ke 'document'. Ini akan menangani klik
-            // bahkan pada tombol yang baru dimuat oleh Turbo.
             document.addEventListener('click', function(event) {
                 // Cek apakah yang diklik (atau parent-nya) adalah tombol sidebar
                 const sidebarToggleBtn = event.target.closest('.btn-close-sidebar');
@@ -638,25 +647,44 @@
             });
 
             // --- 3. Event Listener setelah Halaman Selesai Dimuat Turbo ---
-            // 'turbo:load' berjalan saat load pertama DAN setiap pindah halaman.
-            // Gunakan ini untuk hal-hal yang perlu diinisialisasi ulang.
             document.addEventListener('turbo:load', function() {
 
-                // (A) Sembunyikan Loader
-                const loader = document.getElementById('turbo-loader');
-                if (loader) {
-                    loader.style.display = 'none';
+                // (A) Sembunyikan Loader (MODIFIKASI)
+                function hideTurboLoader() {
+                    const loader = document.getElementById('turbo-loader');
+                    if (loader) {
+                        loader.style.display = 'none';
+                    }
+                    window.loaderStartTime = null; // Reset
+                }
+
+                // (MODIFIKASI) Periksa window.loaderStartTime
+                if (window.loaderStartTime) {
+                    // Jika load dipicu oleh 'turbo:click'
+                    const loadTime = Date.now();
+                    // (MODIFIKASI) Hitung dari window.loaderStartTime
+                    const elapsedTime = loadTime - window.loaderStartTime;
+
+                    if (elapsedTime < minDisplayTime) {
+                        // Jika terlalu cepat, tunggu sisa waktunya
+                        const remainingTime = minDisplayTime - elapsedTime;
+                        setTimeout(hideTurboLoader, remainingTime);
+                    } else {
+                        // Jika sudah cukup lama, sembunyikan langsung
+                        hideTurboLoader();
+                    }
+                } else {
+                    // Jika ini adalah load halaman awal (bukan 'turbo:click')
+                    hideTurboLoader();
                 }
 
                 // (B) Terapkan Status Sidebar dari localStorage
-                // (Ini penting agar saat halaman baru dimuat, sidebar tetap tertutup jika sebelumnya ditutup)
                 const sidebarStateKey = 'sidebarCollapsedState';
                 if (localStorage.getItem(sidebarStateKey) === 'true') {
                     document.body.classList.add('sidebar-collapsed');
                 }
 
                 // (C) Pasang listener untuk Toggle Status di dalam Tabel
-                // (Kita perlu melakukan ini di 'turbo:load' karena tabelnya selalu baru)
                 const toggles = document.querySelectorAll('.document-table .toggle-switch input[type="checkbox"], .table .toggle-switch input[type="checkbox"]'); // Ditambahkan .table
                 toggles.forEach(toggle => {
                     toggle.addEventListener('change', function() {
