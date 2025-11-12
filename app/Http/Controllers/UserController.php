@@ -32,12 +32,29 @@ class UserController extends Controller
 
         // Coba untuk login
         // Kita juga tambahkan pengecekan 'status' => 'aktif'
-        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password'], 'status' => 'aktif'])) {
+
+        // --- MODIFIKASI DISINI ---
+        // Tambahkan $request->boolean('remember') untuk mengaktifkan checkbox "Ingat Saya"
+        if (Auth::attempt(['username' => $credentials['username'], 'password' => $credentials['password'], 'status' => 'aktif'], $request->boolean('remember'))) {
             $request->session()->regenerate();
 
-            // Redirect ke dashboard setelah login berhasil
-            // Anda bisa tambahkan logika redirect berdasarkan role di sini
+            // === MODIFIKASI DIMULAI DI SINI ===
+
+            // Ambil data user yang baru saja login
+            $user = Auth::user();
+
+            // Muat relasi 'role' (pastikan model App\Models\Role ada)
+            $user->load('role');
+
+            // Cek nama role
+            if ($user->role && $user->role->name === 'petugas') {
+                // Jika role adalah 'petugas', redirect ke 'documents.index'
+                return redirect()->intended(route('documents.index'));
+            }
+
+            // Jika bukan 'petugas' (misal 'admin'), redirect ke dashboard
             return redirect()->intended(route('admin.dashboard'));
+            // === MODIFIKASI SELESAI ===
         }
 
         // Jika login gagal
@@ -57,6 +74,6 @@ class UserController extends Controller
 
         $request->session()->regenerateToken();
 
-        return redirect(route('user.login')); // Redirect kembali ke halaman login
+        return redirect(route('login')); // Redirect kembali ke halaman login
     }
 }

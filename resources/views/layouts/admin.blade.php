@@ -400,9 +400,9 @@
 
         /* --- BLOK TABEL PERTAMA (DUPLIKAT) DIHAPUS --- */
         /* Styling tabel yang sebelumnya ada di sini (baris 430-457)
-           sebagian besar tumpang tindih dan ditimpa oleh blok di baris 475.
-           Saya telah menghapusnya dan menggabungkan aturan unik
-           (.keterangan) ke dalam blok di bawah.
+          sebagian besar tumpang tindih dan ditimpa oleh blok di baris 475.
+          Saya telah menghapusnya dan menggabungkan aturan unik
+          (.keterangan) ke dalam blok di bawah.
         */
 
 
@@ -504,75 +504,6 @@
             background: rgb(37, 211, 101) !important;
         }
 
-        /* --- STYLES BARU UNTUK TOGGLE SWITCH (LEBIH KECIL) --- */
-        .status-cell {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: space-between; /* Mendorong teks & toggle */
-        }
-
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 40px; /* Lebar toggle (lebih kecil) */
-            height: 20px; /* Tinggi toggle (lebih kecil) */
-            flex-shrink: 0; /* Mencegah toggle menciut */
-        }
-
-        .toggle-switch input {
-            opacity: 0;
-            width: 0;
-            height: 0;
-        }
-
-        .slider {
-            position: absolute;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: #ccc; /* Warna nonaktif */
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        .slider:before {
-            position: absolute;
-            content: "";
-            height: 14px; /* Tinggi lingkaran (lebih kecil) */
-            width: 14px; /* Lebar lingkaran (lebih kecil) */
-            left: 3px; /* Jarak kiri */
-            bottom: 3px; /* Jarak bawah */
-            background-color: white;
-            -webkit-transition: .4s;
-            transition: .4s;
-        }
-
-        input:checked + .slider {
-            background-color: var(--green-call); /* Warna aktif dari btn-call */
-        }
-
-        input:focus + .slider {
-            box-shadow: 0 0 1px var(--green-call);
-        }
-
-        input:checked + .slider:before {
-            -webkit-transform: translateX(20px);
-            -ms-transform: translateX(20px);
-            transform: translateX(20px); /* Jarak pergeseran (40-14-3-3) */
-        }
-
-        /* Rounded sliders */
-        .slider.round {
-            border-radius: 20px; /* Disesuaikan dgn tinggi */
-        }
-
-        .slider.round:before {
-            border-radius: 50%;
-        }
-
     </style>
 </head>
 <body>
@@ -586,7 +517,8 @@
 
     <!-- Main-Content -->
     <!-- PERUBAHAN: Menambahkan height: 100vh dan overflow-y: auto -->
-    <div class="main-content d-flex flex-column align-items-start align-self-stretch bg-white" style="gap: 20px; flex: 1 0 0; box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.50); z-index: 1000; height: 100vh; overflow-y: auto;">
+    <!-- PERUBAHAN KUNCI: Menghapus 'z-index: 1000;' -->
+    <div class="main-content d-flex flex-column align-items-start align-self-stretch bg-white" style="gap: 20px; flex: 1 0 0; box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.50); height: 100vh; overflow-y: auto;">
     <!-- Header -->
     @include('layouts.header.header')
         <!-- Content -->
@@ -596,13 +528,14 @@
         </div>
     </div>
 
-         <!-- JS Boostrap -->
-         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-         xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-         crossorigin="anonymous"></script>
+
+          <!-- JS Boostrap -->
+          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous"></script>
 
         <!-- MODIFIKASI: JavaScript untuk Toggle Sidebar DAN Toggle Status -->
-         <script>
+          <script>
             // --- (BARU) Variabel untuk melacak waktu muat ---
             // (MODIFIKASI) Pindahkan ke 'window' agar persisten antar muatan Turbo
             // Inisialisasi hanya jika belum ada
@@ -618,7 +551,6 @@
                     return; // Jangan tampilkan loader jika menu sudah aktif
                 }
 
-                // (MODIFIKASI) Catat waktu mulai dan tampilkan loader
                 // (MODIFIKASI) Gunakan window.loaderStartTime
                 window.loaderStartTime = Date.now();
                 const loader = document.getElementById('turbo-loader');
@@ -684,21 +616,9 @@
                     document.body.classList.add('sidebar-collapsed');
                 }
 
-                // (C) Pasang listener untuk Toggle Status di dalam Tabel
-                const toggles = document.querySelectorAll('.document-table .toggle-switch input[type="checkbox"], .table .toggle-switch input[type="checkbox"]'); // Ditambahkan .table
-                toggles.forEach(toggle => {
-                    toggle.addEventListener('change', function() {
-                        const cell = this.closest('.status-cell');
-                        if (cell) {
-                            const statusTextElem = cell.querySelector('.status-text');
-                            if (statusTextElem) {
-                                statusTextElem.textContent = this.checked ? 'Aktif' : 'Nonaktif';
-                            }
-                        }
-                    });
-                });
-
             });
-         </script>
+          </script>
+
+          @stack('scripts')
 </body>
 </html>

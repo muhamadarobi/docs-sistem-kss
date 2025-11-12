@@ -3,6 +3,54 @@
 @extends('auth.login') {{-- Saya asumsikan ini nama layout Anda --}}
 
 @section('content')
+
+<style>
+    /* Ini adalah style untuk pesan "melayang" (toast)
+      Pesan ini akan muncul di atas, tengah, dan hilang setelah 5 detik
+    */
+    .toast-message {
+        position: fixed; /* Tetap di layar */
+        top: 20px; /* Jarak 20px dari atas */
+        left: 50%; /* Posisikan di tengah secara horizontal */
+        transform: translateX(-50%); /* Sempurnakan posisi tengah */
+        z-index: 9999; /* Tampil di atas segalanya */
+
+        padding: 12px 20px;
+        border-radius: 8px;
+        font-weight: 500;
+
+        /* Warna (Bootstrap Danger/Merah) */
+        background-color: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+
+        /* Animasi untuk muncul dan hilang */
+        opacity: 0; /* Mulai transparan */
+        animation: fadeInOut 5s ease-in-out forwards;
+    }
+
+    /* Keyframes untuk animasi */
+    @keyframes fadeInOut {
+        0%   { opacity: 0; top: 0; } /* Mulai: transparan, di atas layar */
+        15%  { opacity: 1; top: 20px; } /* Muncul & turun ke 20px */
+        85%  { opacity: 1; top: 20px; } /* Diam selama beberapa detik */
+        100% { opacity: 0; top: 0; } /* Hilang & naik kembali */
+    }
+</style>
+{{-- === AKHIR CSS BARU === --}}
+
+
+{{-- === MODIFIKASI BLOK SESSION 'error' === --}}
+{{-- Blok ini sekarang menggunakan class 'toast-message' baru --}}
+@if (session('error'))
+    <div class="toast-message" role="alert">
+        {{ session('error') }}
+    </div>
+@endif
+{{-- === AKHIR MODIFIKASI === --}}
+
     <div class="container-login">
         <img class="image-login" src="{{ asset('assets/KSS.png')}}" alt="">
         <div class="box-login d-flex flex-column align-items-center">
