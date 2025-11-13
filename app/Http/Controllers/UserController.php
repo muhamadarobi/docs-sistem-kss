@@ -50,7 +50,7 @@ class UserController extends Controller
             if ($user->role && $user->role->name === 'petugas') {
                 // Jika role adalah 'petugas', redirect ke 'documents.index'
                 return redirect()->intended(route('documents.index'));
-            }
+            } else
 
             // Jika bukan 'petugas' (misal 'admin'), redirect ke dashboard
             return redirect()->intended(route('admin.dashboard'));

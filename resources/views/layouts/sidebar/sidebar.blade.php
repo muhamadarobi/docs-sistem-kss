@@ -52,12 +52,6 @@
         <!-- Tombol Logout diubah menjadi Form POST -->
         <form action="{{ route('logout') }}" method="POST" class="align-self-stretch" style="margin: 0; padding: 0;" data-turbo="false">
             @csrf
-
-            <!--
-                1. Menambahkan class 'menu' agar padding & hover-nya sama dengan menu lain.
-                2. Menghapus 'padding: 0' dari style inline.
-                3. Menambahkan event onmouseover/onmouseout untuk mengubah warna jadi merah saat hover.
-            -->
             <button type="submit"
                     class="logout-button menu d-flex align-items-center align-self-stretch"
                     style="background: transparent; border: none; cursor: pointer; text-align: left; width: 100%;"

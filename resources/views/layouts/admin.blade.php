@@ -18,8 +18,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
-    <!-- TAMBAHAN: Impor library Turbo.js -->
-    <!-- Ini akan membuat navigasi terasa instan tanpa reload halaman penuh -->
+    <!-- Impor library Turbo.js -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-esm.js"></script>
 
     <!-- CSS -->
@@ -30,40 +29,38 @@
             --black-color: #111111;
             --base-white: #F9F9F9;
             --redcolor: #D20000;
-            --green-call: #25d366; /* Warna hijau dari btn-call */
+            --green-call: #25d366;
         }
 
         /* Global CSS */
         body {
             font-family: 'Inter', sans-serif;
-            /* height: 100vh; DIHAPUS agar body bisa memanjang */
             width: 100%;
             display: flex;
             align-items: start;
             background-color: var(--base-white);
-            /* Mencegah overflow horizontal saat transisi */
             overflow-x: hidden;
         }
 
-        /* --- TAMBAHAN: CSS Untuk Turbo Loader --- */
+        /* --- CSS Untuk Turbo Loader --- */
         #turbo-loader {
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background: rgba(255, 255, 255, 0.8); /* Latar belakang semi-transparan */
+            background: rgba(255, 255, 255, 0.8);
             display: flex;
             align-items: center;
             justify-content: center;
             z-index: 9999;
             display: none; /* Sembunyi by default */
-            transition: opacity 0.2s ease; /* Transisi halus */
+            transition: opacity 0.2s ease;
         }
 
         #turbo-loader .spinner {
-            border: 8px solid #f3f3f3; /* Abu-abu muda */
-            border-top: 8px solid var(--blue-kss); /* Biru KSS */
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid var(--blue-kss);
             border-radius: 50%;
             width: 60px;
             height: 60px;
@@ -81,17 +78,16 @@
             gap: 20px;
             border-radius: 8px;
             text-decoration: none;
-            /* Transisi untuk gap dan padding */
-            transition: all 0.1s ease;
+            /* HAPUS 'transition: all' agar tidak konflik dengan transisi 'width' di .sidebar */
+            transition: background 0.1s ease, outline 0.1s ease;
         }
         .menu .text-sidebar, .logout-button .logout {
             font-size: 14px;
             font-weight: 500;
             color: var(--black-color);
             text-decoration: none;
-            /* Transisi untuk opacity dan visibilitas */
             transition: opacity 0.1s ease, visibility 0.1s ease;
-            white-space: nowrap; /* Mencegah teks turun baris saat transisi */
+            white-space: nowrap;
         }
         .menu:hover {
             background: rgba(243, 157, 18, 0.132);
@@ -139,13 +135,9 @@
             padding: 8px 10px;
             box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.50);
             border: none;
-            cursor: pointer; /* Menambahkan cursor pointer */
+            cursor: pointer;
         }
-        /* Transisi untuk tombol panah */
         .btn-close-sidebar svg {
-            /* Mengganti 'ease' dengan cubic-bezier untuk efek 'bouncy' */
-            /* transition: transform 0.3s ease; */
-            /* Diubah ke ease-in-out-back 500ms */
             transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
@@ -160,71 +152,66 @@
         /* --- CSS Style untuk Sidebar --- */
         .sidebar {
             padding: 20px;
-            /* Transisi untuk lebar sidebar */
-            /* Mengganti 'ease' dengan cubic-bezier untuk efek 'bouncy' */
-            /* transition: width 0.3s ease; */
-            /* Diubah ke ease-in-out-back 500ms */
+            /* PERBAIKAN: Transisi 'width' adalah penyebab flicker saat navigasi */
             transition: width 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            /* Menentukan lebar awal sidebar dari kontennya */
-            width: 250px; /* (210px menu + 20px padding kiri + 20px padding kanan) */
-
-            /* --- TAMBAHAN UNTUK STICKY/SCROLL --- */
+            width: 250px;
+            z-index: 1;
             height: 100vh;
             position: sticky;
             top: 0;
-            flex-shrink: 0; /* Mencegah sidebar menyusut */
-            /* --- AKHIR TAMBAHAN --- */
+            flex-shrink: 0;
+        }
+
+        .main-content {
+            z-index: 1;
         }
 
         .sidebar-menu {
-            transition: width 0.3s ease; /* Transisi untuk lebar menu */
+            /* Hapus transisi width dari sini untuk mencegah konflik */
+        }
+
+        .modal-backdrop.show {
+            opacity: 0.5;
         }
 
         .logo img {
-            transition: all 0.3s ease; /* Transisi untuk logo */
+            transition: all 0.3s ease;
         }
 
         /* --- MODIFIKASI: Style untuk .sidebar-collapsed --- */
 
-        /* 1. Atur ulang lebar sidebar saat body memiliki class .sidebar-collapsed */
         body.sidebar-collapsed .sidebar {
-            width: 86px; /* (46px lebar ikon logo + 20px padding kiri + 20px padding kanan) */
-            align-items: center; /* Menengahkan item saat diciutkan */
+            width: 86px;
+            align-items: center;
         }
 
-        /* 2. Sembunyikan teks KSS pada logo */
         body.sidebar-collapsed .logo img[alt='Kaltim Satria Samudera'] {
             display: none;
         }
 
-        /* 3. Pusatkan logo */
         body.sidebar-collapsed .logo {
             justify-content: center;
-            width: 100%; /* Memastikan logo terpusat di dalam sidebar 86px */
+            width: 100%;
         }
 
-        /* 4. Sembunyikan judul "MENU" */
         body.sidebar-collapsed .menu-text {
             display: none;
         }
 
-        /* 5. Atur ulang lebar sidebar-menu */
         body.sidebar-collapsed .sidebar-menu {
-            width: auto; /* Biarkan lebar mengikuti konten (ikon) */
-            align-items: center; /* Menengahkan menu */
+            width: auto;
+            align-items: center;
         }
 
-        /* 6. Atur ulang menu item dan tombol logout */
         body.sidebar-collapsed .menu,
         body.sidebar-collapsed .logout-button {
-            width: 46px; /* Samakan lebar dengan ikon logo */
+            width: 46px;
             gap: 0;
-            justify-content: center; /* Menengahkan ikon di dalam tombol */
+            justify-content: center;
             padding-left: 0;
             padding-right: 0;
         }
 
-        /* 7. Sembunyikan semua teks di dalam menu dan tombol logout */
         body.sidebar-collapsed .text-sidebar,
         body.sidebar-collapsed .logout {
             display: none;
@@ -232,7 +219,6 @@
             visibility: hidden;
         }
 
-        /* 8. Putar tombol panah di header */
         body.sidebar-collapsed .btn-close-sidebar svg {
             transform: rotate(180deg);
         }
@@ -398,14 +384,6 @@
             border: 1px solid rgba(0, 0, 0, 0.25);
         }
 
-        /* --- BLOK TABEL PERTAMA (DUPLIKAT) DIHAPUS --- */
-        /* Styling tabel yang sebelumnya ada di sini (baris 430-457)
-          sebagian besar tumpang tindih dan ditimpa oleh blok di baris 475.
-          Saya telah menghapusnya dan menggabungkan aturan unik
-          (.keterangan) ke dalam blok di bawah.
-        */
-
-
         /* Pengguna */
         .btn-add {
             display: flex;
@@ -425,7 +403,7 @@
         }
 
 
-        /* --- BLOK STYLING TABEL UTAMA (GABUNGAN) --- */
+        /* Styling Tabel Utama */
         .table tr th, .table tr td{
             display: flex;
             padding: 10px 15px;
@@ -434,26 +412,23 @@
             font-size: 12px;
             font-weight: 600;
             max-width: 250px;
-            word-break: break-word; /* Tambahan */
+            word-break: break-word;
         }
         .table tr th.number, .table tr td.number {
             max-width: 50px;
             min-width: 20px;
-            flex: 0 0 50px; /* Tambahan */
+            flex: 0 0 50px;
         }
 
-        /* Aturan ini dipindahkan dari blok duplikat pertama */
         .table tr th.keterangan, .table tr td.keterangan {
             min-width: 350px;
             max-width: 2000px;
         }
 
-        /* --- TAMBAHAN STYLE UNTUK KOLOM STATUS & AKSI --- */
         .table tr th.status, .table tr td.status-cell {
             max-width: 150px;
             flex: 0 0 150px;
         }
-        /* --- AKHIR TAMBAHAN STYLE --- */
 
         .table tr td {
             font-weight: 400;
@@ -469,26 +444,10 @@
             font-size: 10px;
             text-align: center;
             border-radius: 6px;
-
-
-            /* CATATAN: Jika Anda memerlukan tombol *tanpa* background di
-               beberapa tabel (seperti di .document-table), Anda perlu
-               membuat aturan CSS yang lebih spesifik.
-
-               Misalnya, Anda bisa menambahkan:
-               .document-table .table tr td.aksi button {
-                   background: none;
-                   padding: 0;
-                   color: initial;
-               }
-
-               Untuk saat ini, saya mengasumsikan styling tombol ini
-               (dengan background warna) adalah yang diinginkan.
-            */
         }
 
-            tr.body td {
-        border-bottom: none;
+        tr.body td {
+            border-bottom: none;
         }
 
         tr.body {
@@ -507,7 +466,7 @@
     </style>
 </head>
 <body>
-    <!-- TAMBAHAN: Elemen Loading Overlay -->
+    <!-- Elemen Loading Overlay -->
     <div id="turbo-loader">
         <div class="spinner"></div>
     </div>
@@ -516,42 +475,68 @@
     @include('layouts.sidebar.sidebar')
 
     <!-- Main-Content -->
-    <!-- PERUBAHAN: Menambahkan height: 100vh dan overflow-y: auto -->
-    <!-- PERUBAHAN KUNCI: Menghapus 'z-index: 1000;' -->
     <div class="main-content d-flex flex-column align-items-start align-self-stretch bg-white" style="gap: 20px; flex: 1 0 0; box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.50); height: 100vh; overflow-y: auto;">
     <!-- Header -->
     @include('layouts.header.header')
         <!-- Content -->
-        <!-- PERUBAHAN: Menambahkan padding-bottom agar ada ruang di akhir scroll -->
         <div class="content-page d-flex flex-column align-items-center justify-content-center align-self-stretch" style="padding:  0px 25px 25px 25px; gap: 10px;">
             @yield('content')
         </div>
     </div>
 
+    @stack('modal')
 
-          <!-- JS Boostrap -->
-          <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-          xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
-          crossorigin="anonymous"></script>
 
-        <!-- MODIFIKASI: JavaScript untuk Toggle Sidebar DAN Toggle Status -->
-          <script>
-            // --- (BARU) Variabel untuk melacak waktu muat ---
-            // (MODIFIKASI) Pindahkan ke 'window' agar persisten antar muatan Turbo
-            // Inisialisasi hanya jika belum ada
+        <!-- JS Boostrap -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+        xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        crossorigin="anonymous"></script>
+
+        <!-- =================================================================== -->
+        <!-- SCRIPT BARU UNTUK MENGATASI FLICKER SIDEBAR DENGAN TURBO -->
+        <!-- =================================================================== -->
+        <script>
+            const sidebarStateKey = 'sidebarCollapsedState';
+
+            // --- 1. LOGIKA AGAR TIDAK "BUKA-TUTUP" (PENTING) ---
+
+            // (A) Saat Refresh Halaman (F5)
+            // Jalankan segera (IIFE) agar class terpasang sebelum user melihat halaman
+            (function() {
+                const isCollapsed = localStorage.getItem(sidebarStateKey) === 'true';
+                if (isCollapsed) {
+                    document.body.classList.add('sidebar-collapsed');
+                }
+            })();
+
+            // (B) Saat Pindah Menu (Turbo Navigation)
+            // Event ini berjalan SEBELUM Turbo menukar body lama dengan body baru
+            document.addEventListener('turbo:before-render', (event) => {
+                const isCollapsed = localStorage.getItem(sidebarStateKey) === 'true';
+
+                // Jika status tersimpan adalah collapsed,
+                // paksa body BARU (event.detail.newBody) untuk punya class tersebut
+                if (isCollapsed) {
+                    event.detail.newBody.classList.add('sidebar-collapsed');
+                }
+            });
+
+
+            // --- 2. LOGIKA LOADER & KLIK (Sama seperti sebelumnya) ---
+
             if (typeof window.loaderStartTime === 'undefined') {
                 window.loaderStartTime = null;
             }
             const minDisplayTime = 500; // 0.5 detik
 
-            // --- 1. Event Listener untuk Navigasi Turbo (Menampilkan Loader) ---
+            // Event saat link diklik (Tampilkan Loader)
             document.addEventListener('turbo:click', function(event) {
                 const clickedLink = event.target.closest('a');
+                // Jangan tampilkan loader jika menu yang diklik sudah aktif
                 if (clickedLink && clickedLink.classList.contains('menu') && clickedLink.classList.contains('active')) {
-                    return; // Jangan tampilkan loader jika menu sudah aktif
+                    return;
                 }
 
-                // (MODIFIKASI) Gunakan window.loaderStartTime
                 window.loaderStartTime = Date.now();
                 const loader = document.getElementById('turbo-loader');
                 if (loader) {
@@ -559,17 +544,15 @@
                 }
             });
 
-            // --- 2. Event Listener untuk Tombol Sidebar (Event Delegation) ---
+            // Event Listener Global untuk Tombol Toggle Sidebar
             document.addEventListener('click', function(event) {
-                // Cek apakah yang diklik (atau parent-nya) adalah tombol sidebar
                 const sidebarToggleBtn = event.target.closest('.btn-close-sidebar');
 
                 if (sidebarToggleBtn) {
-                    // Jika ya, jalankan logika toggle
-                    const sidebarStateKey = 'sidebarCollapsedState';
+                    // Toggle class di body
                     document.body.classList.toggle('sidebar-collapsed');
 
-                    // Simpan status baru ke localStorage
+                    // Simpan status terbaru ke localStorage
                     if (document.body.classList.contains('sidebar-collapsed')) {
                         localStorage.setItem(sidebarStateKey, 'true');
                     } else {
@@ -578,23 +561,23 @@
                 }
             });
 
-            // --- 3. Event Listener setelah Halaman Selesai Dimuat Turbo ---
+            // Event setelah Turbo selesai load (Sembunyikan Loader)
             document.addEventListener('turbo:load', function() {
 
-                // (A) Sembunyikan Loader (MODIFIKASI)
+                // (Kita tidak perlu lagi set class sidebar di sini,
+                //  karena sudah ditangani oleh 'turbo:before-render' dan IIFE)
+
+                // Logic Sembunyikan Loader
                 function hideTurboLoader() {
                     const loader = document.getElementById('turbo-loader');
                     if (loader) {
                         loader.style.display = 'none';
                     }
-                    window.loaderStartTime = null; // Reset
+                    window.loaderStartTime = null; // Reset timer
                 }
 
-                // (MODIFIKASI) Periksa window.loaderStartTime
                 if (window.loaderStartTime) {
-                    // Jika load dipicu oleh 'turbo:click'
                     const loadTime = Date.now();
-                    // (MODIFIKASI) Hitung dari window.loaderStartTime
                     const elapsedTime = loadTime - window.loaderStartTime;
 
                     if (elapsedTime < minDisplayTime) {
@@ -609,16 +592,12 @@
                     // Jika ini adalah load halaman awal (bukan 'turbo:click')
                     hideTurboLoader();
                 }
-
-                // (B) Terapkan Status Sidebar dari localStorage
-                const sidebarStateKey = 'sidebarCollapsedState';
-                if (localStorage.getItem(sidebarStateKey) === 'true') {
-                    document.body.classList.add('sidebar-collapsed');
-                }
-
             });
-          </script>
+        </script>
+        <!-- =================================================================== -->
+        <!-- AKHIR DARI SCRIPT BARU -->
+        <!-- =================================================================== -->
 
-          @stack('scripts')
+        @stack('scripts')
 </body>
 </html>

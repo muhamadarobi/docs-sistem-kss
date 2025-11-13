@@ -1,3 +1,28 @@
+@php
+    // Set timezone ke Waktu Indonesia Tengah (WITA)
+    // Sesuaikan 'Asia/Makassar' jika server Anda berada di timezone berbeda
+    date_default_timezone_set('Asia/Makassar');
+    $hour = (int)date('G');
+    $greeting = '';
+
+    if ($hour >= 5 && $hour < 11) {
+        $greeting = 'Selamat Pagi'; // 5:00 - 10:59
+    } elseif ($hour >= 11 && $hour < 15) {
+        $greeting = 'Selamat Siang'; // 11:00 - 14:59
+    } elseif ($hour >= 15 && $hour < 19) {
+        $greeting = 'Selamat Sore'; // 15:00 - 18:59
+    } else {
+        $greeting = 'Selamat Malam'; // 19:00 - 4:59
+    }
+
+    // Ambil data user yang sedang login.
+    // Pastikan user sudah login (middleware 'auth' harus melindungi rute ini)
+    $userName = Auth::user()->name ?? 'Pengguna'; // Fallback jika nama tidak ada
+
+    // Ambil nama peran dan ubah huruf pertama jadi kapital
+    $userRole = Auth::user()->role ? ucfirst(Auth::user()->role->name) : 'User'; // Fallback jika role tidak ada
+@endphp
+
 <div class="header d-flex justify-content-between align-items-center align-self-stretch">
     <div class="left-header d-flex align-items-center" style="gap: 22px;">
         <!-- Ini adalah tombol trigger kita -->
@@ -7,8 +32,15 @@
             </svg>
         </button>
         <div class="akun-title d-flex flex-column align-items-start" style="gap: 2px;">
-            <span class="nama" style="font-weight: 600; color: #111;">Selamat Pagi, Pak Manajer</span>
-            <span class="title" style="font-size: 10px; font-weight: 300; color: #111;">Manajer Operasional</span>
+
+            <!-- MODIFIKASI DI SINI -->
+            <!-- Menampilkan sapaan dan nama user -->
+            <span class="nama" style="font-weight: 600; color: #111;">{{ $greeting }}, {{ $userName }}</span>
+
+            <!-- MODIFIKASI DI SINI -->
+            <!-- Menampilkan peran user -->
+            <span class="title" style="font-size: 10px; font-weight: 300; color: #111;">{{ $userRole }}</span>
+
         </div>
     </div>
     <div class="right-header d-flex justify-content-end align-items-center" style="gap: 30px;">

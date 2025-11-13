@@ -145,7 +145,7 @@
 </style>
           <h1 class="title-page align-self-stretch">Manajemen Pengguna</h1>
           <div class="data-user d-flex flex-column align-items-start align-self-stretch" style="gap: 20px;">
-              <button class="btn-add" data-bs-target="#ModalAddUser" data-bs-toggle="modal">
+              <button type="button" class="btn-add" data-bs-target="#ModalAddUser" data-bs-toggle="modal">
                   <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 12 12" fill="none">
                       <path d="M4.5 6.99902C6.98405 7.00177 8.99712 9.01493 9 11.499C9 11.7752 8.77613 11.999 8.5 11.999H0.5C0.223859 11.999 0 11.7752 0 11.499C0.00290797 9.01493 2.01595 7.00179 4.5 6.99902ZM10 3.99902C10.2761 3.99907 10.5 4.22293 10.5 4.49902V5.49902H11.5C11.7761 5.49907 11.9999 5.72294 12 5.99902C12 6.27515 11.7761 6.49898 11.5 6.49902H10.5V7.49902C10.5 7.77515 10.2761 7.99898 10 7.99902C9.72386 7.99902 9.5 7.77517 9.5 7.49902V6.49902H8.5C8.22386 6.49902 8 6.27517 8 5.99902C8.00005 5.72292 8.22389 5.49902 8.5 5.49902H9.5V4.49902C9.50003 4.2229 9.72388 3.99902 10 3.99902ZM4.5 0C6.15685 0 7.5 1.3431 7.5 3C7.49978 4.65672 6.15672 6 4.5 6C2.84328 6 1.50022 4.65672 1.5 3C1.5 1.3431 2.84315 0 4.5 0Z" fill="white"/>
                   </svg>
@@ -218,7 +218,11 @@
 {{-- ======================================================= --}}
 {{-- MODAL TAMBAH (STRUKTUR DIPERBARUI) --}}
 {{-- ======================================================= --}}
-<div class="modal fade" id="ModalAddUser" aria-hidden="true" aria-labelledby="ModalAddUserLabel" tabindex="-1">
+
+@endsection
+
+@push('modal')
+<div style="" class="modal fade" id="ModalAddUser" aria-hidden="true" aria-labelledby="ModalAddUserLabel" tabindex="-1">
   {{-- Terapkan lebar custom ke .modal-dialog --}}
   <div class="modal-dialog modal-dialog-centered" style="width: 550px;">
     {{-- .modal-content adalah kontainer utama untuk styling --}}
@@ -329,10 +333,7 @@
     </div>
   </div>
 </div>
-
-
-@endsection
-
+@endpush
 @push('scripts')
 <script>
     // Buat fungsi untuk melampirkan listener
