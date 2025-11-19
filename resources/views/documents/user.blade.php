@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KSS - Document Management System</title>
-    <!-- Menggunakan placeholder, ganti jika punya URL ikon -->
-    <link rel="icon" href="https://placehold.co/32x32/0077C2/FFFFFF?text=KSS">
+    <!-- (PERBAIKAN) Menggunakan asset helper untuk ikon -->
+    <link rel="icon" href="{{ asset('assets/Logo-compressed 1.png')}}">
 
     <!-- CDN Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
@@ -198,137 +198,16 @@
     </style>
 </head>
 <body>
-    <!-- MODIFIKASI: style="gap: 25px;" dihapus dari HTML -->
+    <!-- Konten (dari index.blade.php) akan dimasukkan di sini -->
     @yield('content')
+
+    @stack('scripts')
+
     <!-- CDN Bootstrap JS (Dibutuhkan untuk modal) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-    xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+    integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
     crossorigin="anonymous"></script>
 
-    <!-- Script Fungsionalitas Utama -->
-    <script>
-        // Mendapatkan elemen-elemen yang diperlukan
-        const takePhotoInput = document.getElementById('take-photo');
-        const selectGalleryInput = document.getElementById('select-file');
-
-        const pratinjauFoto = document.getElementById('pratinjau-foto');
-        const previewPlaceholder = document.getElementById('preview-placeholder');
-        const cancelPreviewBtn = document.getElementById('cancel-preview-btn');
-
-        // Elemen-elemen baru untuk webcam
-        const takePhotoLabel = document.getElementById('take-photo-label');
-        const webcamModalElement = document.getElementById('webcam-modal');
-        const webcamModal = new bootstrap.Modal(webcamModalElement);
-        const webcamVideo = document.getElementById('webcam-video');
-        const webcamCanvas = document.getElementById('webcam-canvas');
-        const snapButton = document.getElementById('snap-button');
-
-        let stream;
-
-        /**
-         * Membatalkan pratinjau, mengembalikan ke placeholder
-         * dan mereset input file.
-         */
-        function cancelPreview() {
-            pratinjauFoto.src = '';
-            pratinjauFoto.classList.add('d-none');
-            cancelPreviewBtn.classList.add('d-none');
-            previewPlaceholder.classList.remove('d-none');
-            takePhotoInput.value = null;
-            selectGalleryInput.value = null;
-        }
-
-        /**
-         * Menangani pemilihan file (dari kamera atau galeri)
-         * dan menampilkan pratinjaunya.
-         */
-        function handleFileSelect(event) {
-            const file = event.target.files[0];
-
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    pratinjauFoto.src = e.target.result;
-                    pratinjauFoto.classList.remove('d-none');
-                    previewPlaceholder.classList.add('d-none');
-                    cancelPreviewBtn.classList.remove('d-none');
-                }
-                reader.readAsDataURL(file);
-            } else {
-                cancelPreview();
-            }
-        }
-
-        takePhotoInput.addEventListener('change', handleFileSelect);
-        selectGalleryInput.addEventListener('change', handleFileSelect);
-        cancelPreviewBtn.addEventListener('click', cancelPreview);
-
-
-        // --- LOGIKA WEBCAM ---
-
-        async function startWebcam() {
-            try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: true,
-                    audio: false
-                });
-
-                webcamModal.show();
-                webcamVideo.srcObject = stream;
-            } catch (err) {
-                console.error("Error mengakses webcam:", err);
-                takePhotoInput.click();
-            }
-        }
-
-        function stopWebcam() {
-            if (stream) {
-                stream.getTracks().forEach(track => track.stop());
-            }
-            if (webcamModal._isShown) {
-                 webcamModal.hide();
-            }
-            webcamVideo.srcObject = null;
-        }
-
-        function takeSnapshot() {
-            const width = webcamVideo.videoWidth;
-            const height = webcamVideo.videoHeight;
-            webcamCanvas.width = width;
-            webcamCanvas.height = height;
-
-            const context = webcamCanvas.getContext('2d');
-            context.drawImage(webcamVideo, 0, 0, width, height);
-
-            const dataUrl = webcamCanvas.toDataURL('image/png');
-
-            pratinjauFoto.src = dataUrl;
-            pratinjauFoto.classList.remove('d-none');
-            previewPlaceholder.classList.add('d-none');
-            cancelPreviewBtn.classList.remove('d-none');
-
-            stopWebcam();
-        }
-
-        snapButton.addEventListener('click', takeSnapshot);
-
-        webcamModalElement.addEventListener('hidden.bs.modal', function () {
-            if (stream) {
-                 stopWebcam();
-            }
-        });
-
-        const isMobile = /Mobi|Android/i.test(navigator.userAgent);
-
-        if (!isMobile && navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-
-            takePhotoLabel.addEventListener('click', function(event) {
-                event.preventDefault();
-                startWebcam();
-            });
-        }
-    </script>
 
 </body>
 </html>
-

@@ -4,24 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>KSS - Document Management System</title>
-    <!-- Placeholder Icon -->
     <link rel="icon" href="{{ asset('assets/Logo-compressed 1.png')}}">
 
-    <!-- CDN Bootstrap -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
     rel="stylesheet"
-    xintegrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+    integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
     crossorigin="anonymous">
 
-    <!-- Google Fonts (Inter) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
 
-    <!-- Impor library Turbo.js -->
     <script type="module" src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.4/dist/turbo.es2017-esm.js"></script>
 
-    <!-- CSS -->
     <style>
         :root{
             --blue-kss: #0077C2;
@@ -463,22 +458,32 @@
             background: rgb(37, 211, 101) !important;
         }
 
+        #previewModalContent {
+            width: 100%;
+            height: 75vh;
+            overflow: hidden;
+        }
+        #previewModalContent img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+        #previewModalContent embed {
+            width: 100%;
+            height: 100%;
+        }
+
     </style>
 </head>
 <body>
-    <!-- Elemen Loading Overlay -->
     <div id="turbo-loader">
         <div class="spinner"></div>
     </div>
 
-    <!-- Sidebar -->
     @include('layouts.sidebar.sidebar')
 
-    <!-- Main-Content -->
     <div class="main-content d-flex flex-column align-items-start align-self-stretch bg-white" style="gap: 20px; flex: 1 0 0; box-shadow: 0 0 4px 0 rgba(0, 0, 0, 0.50); height: 100vh; overflow-y: auto;">
-    <!-- Header -->
     @include('layouts.header.header')
-        <!-- Content -->
         <div class="content-page d-flex flex-column align-items-center justify-content-center align-self-stretch" style="padding:  0px 25px 25px 25px; gap: 10px;">
             @yield('content')
         </div>
@@ -487,14 +492,10 @@
     @stack('modal')
 
 
-        <!-- JS Boostrap -->
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
-        xintegrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
         crossorigin="anonymous"></script>
 
-        <!-- =================================================================== -->
-        <!-- SCRIPT BARU UNTUK MENGATASI FLICKER SIDEBAR DENGAN TURBO -->
-        <!-- =================================================================== -->
         <script>
             const sidebarStateKey = 'sidebarCollapsedState';
 
@@ -594,10 +595,6 @@
                 }
             });
         </script>
-        <!-- =================================================================== -->
-        <!-- AKHIR DARI SCRIPT BARU -->
-        <!-- =================================================================== -->
-
         @stack('scripts')
 </body>
 </html>

@@ -45,5 +45,6 @@ Route::middleware(['auth', 'role:petugas'])->group(function () {
 
     Route::get('/user', [DocumentsController::class, 'index'])->name('documents.index');
     // Tambahkan rute petugas lainnya di sini jika ada...
+    Route::post('/documents', [DocumentsController::class, 'store'])->name('documents.store');
 
 });

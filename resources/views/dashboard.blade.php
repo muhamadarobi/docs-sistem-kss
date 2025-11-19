@@ -1,13 +1,50 @@
 @extends('layouts.admin')
 
 @section('content')
+
+<style>
+    /* (PERBAIKAN V3) Paksa modal pratinjau agar selalu terang */
+    #previewModal .modal-content {
+        background-color: #ffffff !important;
+        color: #212529 !important;
+    }
+    #previewModal .modal-header {
+        background-color: #f8f9fa !important;
+        color: #212529 !important;
+        border-bottom: 1px solid #dee2e6 !important;
+    }
+    #previewModal .modal-title {
+        color: #212529 !important;
+    }
+    #previewModal .modal-body {
+        background-color: #ffffff !important;
+    }
+    #previewModal .btn-close {
+        filter: none !important;
+    }
+    /* (AKHIR PERBAIKAN V3) */
+
+    #previewModalContent {
+        width: 100%;
+        height: 75vh;
+        overflow: hidden;
+    }
+    #previewModalContent img {
+        width: 100%; height: 100%; object-fit: contain;
+    }
+    #previewModalContent embed {
+        width: 100%; height: 100%;
+    }
+</style>
+
 <h1 class="title-page align-self-stretch">Dashboard Dokumen Masuk</h1>
 <div class="dashboard d-flex flex-column align-items-start align-self-stretch" style="gap: 30px;">
     <div class="dashboard-card d-flex align-items-center align-self-stretch" style="gap: 20px;">
+
         <div class="card">
             <div class="card-info">
-                <span class="number">7</span>
-                <span class="card-title">Dokumen Masuk</span>
+                <span class="number">{{ $dokumenMasukHariIni }}</span>
+                <span class="card-title">Dokumen Masuk (Hari Ini)</span>
             </div>
             <div class="card-icon">
                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="19" viewBox="0 0 16 19" fill="none">
@@ -15,9 +52,10 @@
                 </svg>
             </div>
         </div>
+
         <div class="card">
             <div class="card-info">
-                <span class="number">12</span>
+                <span class="number">{{ $petugasLapangan }}</span>
                 <span class="card-title">Petugas Lapangan</span>
             </div>
             <div class="card-icon">
@@ -26,9 +64,10 @@
                 </svg>
             </div>
         </div>
+
         <div class="card">
             <div class="card-info">
-                <span class="number">145</span>
+                <span class="number">{{ $dokumenBulanIni }}</span>
                 <span class="card-title">Dokumen Bulan Ini</span>
             </div>
             <div class="card-icon">
@@ -37,9 +76,10 @@
                 </svg>
             </div>
         </div>
+
         <div class="card">
             <div class="card-info">
-                <span class="number">1.723</span>
+                <span class="number">{{ number_format($totalArsip) }}</span>
                 <span class="card-title">Total Arsip Dokumen</span>
             </div>
             <div class="card-icon">
@@ -49,37 +89,125 @@
             </div>
         </div>
     </div>
+
     <div class="dashboard-notif d-flex flex-column align-items-start align-self-stretch">
         <span class="notif-title align-self-stretch" style="font-size: 14px; font-weight: 600;">Notifikasi Terbaru</span>
         <div class="notif-list d-flex flex-column align-items-start align-self-stretch" style="gap: 20px;">
+
+            @forelse($notifikasiTerbaru as $notif)
             <div class="notif-item">
                 <div class="detail-notif d-flex flex-column align-items-start" style="gap: 15px;">
                     <div class="info-notif d-flex flex-column align-items-start align-self-stretch" style="gap: 2px;">
                         <div class="document-notif d-flex align-items-center" style="gap: 6px; font-size: 14px;">
-                            <span class="nama fw-bold">Budi Santoso</span>
+                            <span class="nama fw-bold">{{ $notif->user->name ?? 'User Dihapus' }}</span>
                             <span>Mengunggah</span>
-                            <span class="document-name fw-bold" style="color: var(--blue-kss);">Surat Masuk</span>
+                            <span class="document-name fw-bold" style="color: var(--blue-kss);">{{ $notif->documentType->name ?? 'N/A' }}</span>
                         </div>
-                        <span class="doc-keterangan" style="font-size: 13px; font-weight: 300;">No. Polisi: KT 1272 DX  || No.Dok: DO-1241</span>
+                        <span class="doc-keterangan" style="font-size: 13px; font-weight: 300;">
+                            {{ $notif->title }}
+                            @if($notif->notes)
+                                || {{ Str::limit($notif->notes, 40) }}
+                            @endif
+                        </span>
                     </div>
                     <div class="action d-flex align-items-center" style="gap: 15px;">
-                        <button class="see-doc d-flex align-items-center">
+                        <button class="see-doc d-flex align-items-center"
+                                type="button"
+                                data-bs-toggle="modal"
+                                data-bs-target="#previewModal"
+                                data-title="{{ $notif->title }}"
+                                data-path="{{ Storage::url($notif->file_path) }}"
+                                data-extension="{{ pathinfo($notif->file_path, PATHINFO_EXTENSION) }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="13" height="10" viewBox="0 0 13 10" fill="none">
                                 <path d="M6.42273 0C9.73554 7.39256e-05 11.6232 2.26765 12.453 3.61914C12.9761 4.46537 12.9761 5.53462 12.453 6.38086C11.6232 7.73235 9.73554 9.99993 6.42273 10C3.10988 10 1.22231 7.73238 0.392456 6.38086C-0.130754 5.53456 -0.130754 4.46541 0.392456 3.61914C1.22229 2.26763 3.10982 0 6.42273 0ZM6.42273 1.79004C4.6498 1.79004 3.21277 3.22705 3.21277 5C3.2128 6.77293 4.64982 8.20996 6.42273 8.20996C8.19483 8.20809 9.63088 6.77214 9.63269 5C9.63269 3.2271 8.19558 1.79013 6.42273 1.79004ZM6.42273 2.85938C7.6046 2.85947 8.56238 3.81809 8.56238 5C8.56224 6.18179 7.60451 7.13955 6.42273 7.13965C5.24086 7.13965 4.28224 6.18185 4.2821 5C4.2821 3.81803 5.24078 2.85938 6.42273 2.85938Z" fill="#0077C2"/>
                             </svg>
                             Lihat Dokumen
                         </button>
-                        <button class="download d-flex align-items-center">
+                        <a class="download d-flex align-items-center"
+                           href="{{ Storage::url($notif->file_path) }}"
+                           download="{{ \Carbon\Carbon::parse($notif->event_date)->format('Y-m-d') }} - {{ preg_replace('/[\\\\\/:"*?<>|]+/', '', $notif->title) }}.{{ pathinfo($notif->file_path, PATHINFO_EXTENSION) }}">
                             <svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 10 10" fill="none">
                                 <path d="M9.375 6.04199C9.72015 6.04203 10 6.32182 10 6.66699V8.58008C9.99882 9.36394 9.36304 9.99908 8.5791 10H1.41992C0.636036 9.99885 0.000917802 9.36306 0 8.5791V6.66699C0 6.32182 0.279824 6.04199 0.625 6.04199C0.970148 6.04203 1.25 6.32184 1.25 6.66699V8.5791C1.25021 8.67298 1.32609 8.74954 1.41992 8.75H8.5791C8.67313 8.74979 8.74977 8.67313 8.75 8.5791V6.66699C8.75 6.32182 9.02982 6.04199 9.375 6.04199ZM5 0C5.34511 7.27429e-05 5.625 0.279869 5.625 0.625L5.63477 6.3125L6.80957 5.1377C7.05785 4.89791 7.45356 4.90505 7.69336 5.15332C7.93285 5.40162 7.92591 5.79741 7.67773 6.03711L6.33984 7.375C5.6076 8.10723 4.41973 8.10725 3.6875 7.375L2.34961 6.03613C2.11568 5.79393 2.11568 5.41018 2.34961 5.16797C2.58942 4.9197 2.98512 4.91254 3.2334 5.15234L4.38379 6.30273L4.375 0.625C4.375 0.279824 4.65482 0 5 0Z" fill="#333333"/>
                             </svg>
                             Download
-                        </button>
+                        </a>
                     </div>
                 </div>
-                <span class="time-notif fw-light" style="font-size: 12px; color: rgba(17, 17, 17);">5 Menit yang lalu</span>
+                <span class="time-notif fw-light" style="font-size: 12px; color: rgba(17, 17, 17);">{{ $notif->created_at->diffForHumans() }}</span>
             </div>
+            @empty
+            <!-- (MODIFIKASI) Pesan jika tidak ada dokumen dalam 24 jam terakhir -->
+            <div class="notif-item">
+                <div class="detail-notif d-flex flex-column align-items-start" style="gap: 15px;">
+                    <div class="info-notif d-flex flex-column align-items-start align-self-stretch" style="gap: 2px;">
+                        <span class="doc-keterangan" style="font-size: 13px; font-weight: 300;">Tidak ada notifikasi dokumen baru dalam 24 jam terakhir.</span>
+                    </div>
+                </div>
+            </div>
+            @endforelse
         </div>
     </div>
 </div>
+
+<!-- Modal Pratinjau Dokumen -->
+<div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="previewModalLabel">Pratinjau Dokumen</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <div id="previewModalContent">
+          <p class="text-center">Memuat pratinjau...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 @endsection
+
+@push('scripts')
+<!-- JavaScript untuk Modal Pratinjau -->
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const previewModal = document.getElementById('previewModal');
+    if (previewModal) {
+
+        previewModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const title = button.getAttribute('data-title');
+            const path = button.getAttribute('data-path');
+            const extension = button.getAttribute('data-extension').toLowerCase();
+
+            const modalTitle = previewModal.querySelector('.modal-title');
+            const modalBody = previewModal.querySelector('#previewModalContent');
+            modalTitle.textContent = title;
+            modalBody.innerHTML = ''; // Kosongkan dulu
+
+            if (extension === 'pdf') {
+                const embed = document.createElement('embed');
+                embed.src = path;
+                embed.type = 'application/pdf';
+                modalBody.appendChild(embed);
+            } else if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(extension)) {
+                const img = document.createElement('img');
+                img.src = path;
+                img.alt = title;
+                modalBody.appendChild(img);
+            } else {
+                modalBody.innerHTML = '<p class="text-center p-5">Pratinjau tidak didukung untuk tipe file ini. Silakan unduh file untuk melihatnya.</p>';
+            }
+        });
+
+        previewModal.addEventListener('hide.bs.modal', function () {
+            const modalBody = previewModal.querySelector('#previewModalContent');
+            modalBody.innerHTML = '';
+            const modalTitle = previewModal.querySelector('.modal-title');
+            modalTitle.textContent = 'Pratinjau Dokumen';
+        });
+    }
+});
+</script>
+@endpush
